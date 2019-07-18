@@ -1,10 +1,8 @@
 package tau.camera2demo;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -46,8 +44,8 @@ public class Camera2Demo extends Activity implements
     private HandlerThread mThreadHandler;
 
     // size of images captured in ImageReader Callback
-    private int mImageWidth = 1920; //1920
-    private int mImageHeight = 1080; //1080
+    private int mImageWidth = 640; //1920
+    private int mImageHeight = 480; //1080
 
     // Log tag
     private static final String TAG = "Camera2Demo";
@@ -190,7 +188,7 @@ public class Camera2Demo extends Activity implements
         SurfaceTexture texture = mPreviewView.getSurfaceTexture();
 
         // to set PREVIEW size
-        texture.setDefaultBufferSize(mPreviewSize.getWidth(),mPreviewSize.getHeight());
+        texture.setDefaultBufferSize(mImageWidth,mImageHeight);
         surface = new Surface(texture);
         try {
             // to set request for PREVIEW
@@ -200,7 +198,7 @@ public class Camera2Demo extends Activity implements
         }
 
         // to set the format of captured images and the maximum number of images that can be accessed in mImageReader
-        mImageReader = ImageReader.newInstance(mImageWidth, mImageHeight, ImageFormat.YUV_420_888, 2);
+        mImageReader = ImageReader.newInstance(mImageWidth, mImageHeight, ImageFormat.YUV_420_888, 3);
 
         mImageReader.setOnImageAvailableListener(mOnImageAvailableListener,mHandler);
 
@@ -274,9 +272,9 @@ public class Camera2Demo extends Activity implements
             Image.Plane U_plane = image.getPlanes()[1];
             int UV_rowStride = U_plane.getRowStride();  //in particular, uPlane.getRowStride() == vPlane.getRowStride()
             Image.Plane V_plane = image.getPlanes()[2];
-            JNIUtils.RGBADisplay(image.getWidth(), image.getHeight(), Y_rowStride, Y_plane.getBuffer(), UV_rowStride, U_plane.getBuffer(), V_plane.getBuffer(), surface);
+            JNIUtils.RGBADisplay(mImageWidth, mImageHeight, Y_rowStride, Y_plane.getBuffer(), UV_rowStride, U_plane.getBuffer(), V_plane.getBuffer(), surface);
 
-//            JNIUtils.RGBADisplay2(image.getWidth(), image.getHeight(), Y_rowStride, Y_plane.getBuffer(), U_plane.getBuffer(), V_plane.getBuffer(), surface);
+    //        JNIUtils.RGBADisplay2(image.getWidth(), image.getHeight(), Y_rowStride, Y_plane.getBuffer(), U_plane.getBuffer(), V_plane.getBuffer(), surface);
 
 //            Log.d(TAG, "Y plane pixel stride: " + Y_plane.getPixelStride());
 //            Log.d(TAG, "U plane pixel stride: " + U_plane.getPixelStride());
