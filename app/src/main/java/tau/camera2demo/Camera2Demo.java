@@ -33,7 +33,7 @@ public class Camera2Demo extends Activity implements
         TextureView.SurfaceTextureListener {
 
     private CameraDevice mCamera;
-    private String mCameraID = "1";
+    private String mCameraID = "0";
 
     private TextureView mPreviewView;
     private Size mPreviewSize;
@@ -44,8 +44,8 @@ public class Camera2Demo extends Activity implements
     private HandlerThread mThreadHandler;
 
     // size of images captured in ImageReader Callback
-    private int mImageWidth = 640; //1920
-    private int mImageHeight = 480; //1080
+    private int mImageWidth =1920; //640; //1920
+    private int mImageHeight =1080; //480; //1080
 
     // Log tag
     private static final String TAG = "Camera2Demo";
@@ -198,7 +198,7 @@ public class Camera2Demo extends Activity implements
         }
 
         // to set the format of captured images and the maximum number of images that can be accessed in mImageReader
-        mImageReader = ImageReader.newInstance(mImageWidth, mImageHeight, ImageFormat.YUV_420_888, 3);
+        mImageReader = ImageReader.newInstance(mImageWidth, mImageHeight, ImageFormat.YUV_420_888, 2);
 
         mImageReader.setOnImageAvailableListener(mOnImageAvailableListener,mHandler);
 
@@ -272,13 +272,16 @@ public class Camera2Demo extends Activity implements
             Image.Plane U_plane = image.getPlanes()[1];
             int UV_rowStride = U_plane.getRowStride();  //in particular, uPlane.getRowStride() == vPlane.getRowStride()
             Image.Plane V_plane = image.getPlanes()[2];
-            JNIUtils.RGBADisplay(mImageWidth, mImageHeight, Y_rowStride, Y_plane.getBuffer(), UV_rowStride, U_plane.getBuffer(), V_plane.getBuffer(), surface);
+            Log.d(TAG, "Y plane pixel stride: " + Y_plane.getPixelStride());
+            Log.d(TAG, "U plane pixel stride: " + U_plane.getPixelStride());
+            Log.d(TAG, "V plane pixel stride: " + V_plane.getPixelStride());
+            Log.d(TAG, "getPixelStride(): " + image.getPlanes()[1].getPixelStride());
 
-    //        JNIUtils.RGBADisplay2(image.getWidth(), image.getHeight(), Y_rowStride, Y_plane.getBuffer(), U_plane.getBuffer(), V_plane.getBuffer(), surface);
+            JNIUtils.RGBADisplay(image.getHeight(),image.getWidth(), Y_rowStride, Y_plane.getBuffer(), UV_rowStride, U_plane.getBuffer(), V_plane.getBuffer(), surface);
 
-//            Log.d(TAG, "Y plane pixel stride: " + Y_plane.getPixelStride());
-//            Log.d(TAG, "U plane pixel stride: " + U_plane.getPixelStride());
-//            Log.d(TAG, "V plane pixel stride: " + V_plane.getPixelStride());
+//            JNIUtils.RGBADisplay2(image.getWidth(), image.getHeight(), Y_rowStride, Y_plane.getBuffer(), U_plane.getBuffer(), V_plane.getBuffer(), surface);
+
+
 
 //            Log.d(TAG, "Y plane length: " + Y_plane.getBuffer().remaining());
 //            Log.d(TAG, "U plane length: " + U_plane.getBuffer().remaining());
@@ -305,4 +308,5 @@ public class Camera2Demo extends Activity implements
         }
         super.onPause();
     }
+    
 }
